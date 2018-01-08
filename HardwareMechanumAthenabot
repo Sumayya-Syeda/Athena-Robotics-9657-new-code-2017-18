@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.util.Range;
 *
 * This class can be used to define all the specific hardware for a single robot.
 * In this case that robot is a Pushbot.
-* See PushbotTeleopTank_Iteative and others classes starting with "Pushbot" for usage examples.
+* See PushbotTeleopTank_Iterative and others classes starting with "Pushbot" for usage examples.
 *
 * This hardware class assumes the following device names have been configured on the robot:
 * Note:  All names are lower case and some have single spaces between words.
@@ -43,10 +43,9 @@ public DcMotor  right_reardrv_Motor  = null;    // Robot right drive
    public DcMotor  left_back_drv_Motor   = null;    // Robot left back drive
    public DcMotor  right_back_drv_Motor  = null;    // Robot right back drive
    //public DcMotor  ball_collect_Motor    = null;  // ball collecting flap motor
-   public DcMotor  extension1    = null; // glyph lift
-   public DcMotor  linear_lift_Motor    = null; // linear lift (horizontal) for relic
-   public DcMotor  extension2    = null; // lift for relic attached to horizontal linear lift
-   public DcMotor hinge = null; //linear lift hinge
+   public DcMotor  extension1    = null; // Front arm to lift cap ball
+   public DcMotor  linear_lift_Motor    = null; // linear slide
+   public DcMotor  extension2    = null; // Catapult shooting arm
 
    public Servo    claw   = null; //Robot left beacon
    public Servo     jewel_arm  = null; //Robot right beacon
@@ -160,20 +159,6 @@ public DcMotor  right_reardrv_Motor  = null;    // Robot right drive
            //   DbgLog.msg (p_exeception.getLocalizedMessage ());
 
            linear_lift_Motor = null;
-       }
-
-       try
-       {
-           //v_motor_left_drive = hardwareMap.dcMotor.get ("l_drv");
-           //v_motor_left_drive.setDirection (DcMotor.Direction.REVERSE);
-           hinge   = hwMap.dcMotor.get("hinge");
-       }
-       catch (Exception p_exeception)
-       {
-           //m_warning_message ("l_drv");
-           //   DbgLog.msg (p_exeception.getLocalizedMessage ());
-
-           hinge = null;
        }
 
        try
@@ -337,20 +322,11 @@ public DcMotor  right_reardrv_Motor  = null;    // Robot right drive
            extension2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
        }
 
-       if (hinge != null)
-       {
-           //l_return = left_drv_Motor.getPower ();
-           hinge.setPower(0);
-           hinge.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-       }
-
-
-
   /*
- initalize the colorSensorFront and colorSensorBottom
+ initalize the colorSensor and colorSensor
  */
        try {
-           colorSensorFront = hwMap.colorSensor.get("colr_f");
+           colorSensorFront = hwMap.colorSensor.get("color");
        }
        catch (Exception p_exeception)
        {
@@ -521,18 +497,7 @@ public DcMotor  right_reardrv_Motor  = null;    // Robot right drive
        return l_return;
 
    } // a_ball_coll_top_drive_power
-   double a_hinge_power ()
-   {
-       double l_return = 0.0;
 
-       if (hinge != null)
-       {
-           l_return = hinge.getPower ();
-       }
-
-       return l_return;
-
-   }
    /**
     * Access the Ball Collector left drive motor's power level.
     */
