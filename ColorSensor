@@ -1,0 +1,94 @@
+package org.firstinspires.ftc.teamcode;
+
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.View;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+/**
+ * Created by school on 1/21/18.
+ */
+
+public class ColorSensor extends LinearOpMode{ //works on a separate thread
+    private ElapsedTime runTime = new ElapsedTime();
+    com.qualcomm.robotcore.hardware.ColorSensor sensorColor;
+    CRServo button1;
+    CRServo button2;
+    String c;
+
+    public ColorSensor(String clr){
+        c = clr;
+
+    }
+    public void runOpMode(){
+       detectColor();
+
+
+    }
+
+    public void detectColor(){
+        float hsvValues[] = {0F, 0F, 0F};
+        final float values[] = hsvValues; // can never directly set
+        final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(R.id.RelativeLayout);
+        int colorVal = 2;
+        // create instance of the objects with the values from hardware map
+        sensorColor = hardwareMap.colorSensor.get("sensorColor");
+        button1 = hardwareMap.crservo.get("button1");
+        button2 = hardwareMap.crservo.get("button2");
+        telemetry.addData("Initialization", "Complete");
+        button1.setPower(0);
+        button2.setPower(0);
+
+        int b = 1;
+
+        waitForStart();
+        while(opModeIsActive()){
+            //convert the color sensed to hsv to get hue, saturationa and brightiness values, put these values into an array
+            Color.RGBToHSV(sensorColor.red() * 8, sensorColor.blue() * 8, sensorColor.green(), hsvValues);
+
+            //add to telemetry to see the values the color sensor is reading
+            telemetry.addData("Red: ", sensorColor.red());
+            telemetry.addData("Blue: ", sensorColor.blue());
+            telemetry.addData("Green: ", sensorColor.green());
+            telemetry.update();
+
+            button1.setPower(0);
+            button2.setPower(0);
+
+            if (c.equals("red")) {
+                //find values that equal to red; use this for checking if color sensor is reading the color we want
+                //set colorVal here
+            }else{
+                //find values that equal to blue
+                //set colorVal here
+            }
+
+            /* this is code that does stuff when detecting the indicated color*/
+            if(sensorColor.red() > colorVal && b==1){
+                button1.setPower(0.25);
+                sleep(1500); //dont run this code for 1500 ms
+                button1.setPower(-0.25);
+                sleep(1500);
+
+                b = 2; //change button(aka the servo)
+            }else if(sensorColor.red() < colorVal && b==2){
+                button1.setPower(0.25);
+                sleep(1500); //dont run this code for 1500 ms
+                button1.setPower(-0.25);
+                sleep(1500);
+
+                b = 1; //change button(aka the servo)
+            }else{
+                button1.setPower(0);
+                button2.setPower(0);
+            }
+
+        }
+        telemetry.update();
+        idle();
+    }
+
+}
