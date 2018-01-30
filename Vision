@@ -1,0 +1,60 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.vuforia.HINT;
+import com.vuforia.Vuforia;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
+/**
+ * Created by school on 1/19/18.
+ */
+
+public class Vision extends LinearOpMode{
+    //int cameraId = hardwareMap.appContext.getResources().getIdentifier("camearaId", "id",
+         //   hardwareMap)
+    public void runOpMode() throws InterruptedException{
+        VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
+        params.cameraDirection = VuforiaLocalizer.CameraDirection.BACK; //back facing or front facing camera
+        params.vuforiaLicenseKey = "AekRiI7/////AAAAmda7z3gf+k6NmFLcOao17a8S3AAhcBZG4rYMqPnAQMBfV5k8OQALZcXVABSZyFU00TKvcyZh23a+LKpUit+WUYgD15iIMrE09SPWSXVV/RJh1fLQcfxDPxiQHHKmCTNTPdLa+IMM/UPsJCkCPDMqXnIJ8kxGo/4Ou3hLYlwEbxhTk1yTvDZwBpM9uo28bqNkE8HymUM2mfAccLFlTZbR+ar3WVEG9ug7Sx/8PEerXvI2rwStl8Jr7V+k/YhfS87zFniUxCGWDjryQrQvo/pUIPpFSIueNKp4zuDQPpWx0gmezVRPQJx041i1DxZzNx/gaj6g3CGHBET9WijkImNbY5Psz8A3qG1Z+WKT+3uqXQ03";
+        params.cameraMonitorFeedback = VuforiaLocalizer.Parameters.CameraMonitorFeedback.AXES;
+
+        VuforiaLocalizer vuforia = ClassFactory.createVuforiaLocalizer(params);
+        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4); //6 is number of targets
+
+        VuforiaTrackables relicTranckables = vuforia.loadTrackablesFromAsset("RelicVuMark");
+        VuforiaTrackable relicTemplate = relicTranckables.get(0);
+
+        waitForStart();
+
+        relicTranckables.activate();
+
+        while(opModeIsActive()) {
+            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+                telemetry.addData("VuMark", "%s visible", vuMark);
+
+
+            } else {
+                telemetry.addData("VuMark", "not visisble");
+            }
+
+            telemetry.update();
+        }
+
+
+
+    }
+    String format(OpenGLMatrix transformationMatrix){
+        return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() :"null";
+        //if trasformationMatrix is not null, return it as formatAsTransform otherwise return  "null"
+    }
+
+}
